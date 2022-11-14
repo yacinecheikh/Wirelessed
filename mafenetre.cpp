@@ -57,6 +57,8 @@ void MaFenetre::on_quit_btn_clicked()
     qApp->quit();
 }
 
+
+
 void MaFenetre::on_card_btn_clicked()
 {
     uint16_t status = MI_OK;
@@ -66,4 +68,13 @@ void MaFenetre::on_card_btn_clicked()
     uint16_t uidlen = 12;
     status = ISO14443_3_A_PollCard(&reader, atq, sak, uid, &uidlen);
     qDebug() << (status == MI_OK);
+    if (status == MI_OK) {
+        // read sectors (using key 1, 2 and 3)
+        uint8_t data[16];
+        status = Mf_Classic_Read_Block(&reader, true, 1, data, true, 1);
+        qDebug() << (status == MI_OK);
+        if (status == MI_OK) {
+            qDebug() << data;
+        }
+    }
 }
