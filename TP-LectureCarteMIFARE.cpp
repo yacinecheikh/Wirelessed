@@ -25,7 +25,7 @@ BOOL bench = FALSE;
 
 ReaderName MonLecteur;
 
-int main()
+int main_sample()
 {
     int16_t status = MI_OK;
     uint8_t i;
