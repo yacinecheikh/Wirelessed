@@ -22,6 +22,8 @@ private slots:
 
     void on_quit_btn_clicked();
 
+    void on_card_btn_clicked();
+
 private:
     Ui::MaFenetre *ui;
 };

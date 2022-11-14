@@ -56,3 +56,14 @@ void MaFenetre::on_quit_btn_clicked()
     status = CloseCOM(&reader);
     qApp->quit();
 }
+
+void MaFenetre::on_card_btn_clicked()
+{
+    uint16_t status = MI_OK;
+    uint8_t atq[2];
+    uint8_t sak[1];
+    uint8_t uid[12];
+    uint16_t uidlen = 12;
+    status = ISO14443_3_A_PollCard(&reader, atq, sak, uid, &uidlen);
+    qDebug() << (status == MI_OK);
+}
