@@ -24,10 +24,6 @@ MaFenetre::~MaFenetre()
     delete ui;
 }
 
-// TODO:
-// setup git repo
-// use code from TP-LectureCarteMIFARE.cpp
-
 
 ReaderName reader;
 
