@@ -69,10 +69,17 @@ void MaFenetre::on_card_btn_clicked()
     status = ISO14443_3_A_PollCard(&reader, atq, sak, uid, &uidlen);
     qDebug() << (status == MI_OK);
     if (status == MI_OK) {
-        // read sectors (using key 1, 2 and 3)
-        uint8_t data[16];
-        status = Mf_Classic_Read_Block(&reader, true, 1, data, true, 1);
+        //uint8_t data[16]; // 16 bytes per block
+        uint8_t data[240];
+        // read name
+        status = Mf_Classic_Read_Sector(&reader, true, 0, data, true, 0); // use key A for sector 1, stored in slot 1
         qDebug() << (status == MI_OK);
+
+        // read points
+        // read sectors (using key 1, 2 and 3)
+        //status = Mf_Classic_Read_Block(&reader, TRUE, 0, data, true, 0);
+        //status = Mf_Classic_Read_Block(&reader, TRUE, 5, data, true, 0);
+        //qDebug() << (status == MI_OK);
         if (status == MI_OK) {
             qDebug() << data;
         }
