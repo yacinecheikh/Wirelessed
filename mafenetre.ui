@@ -85,7 +85,7 @@
     <string>Identité</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_name">
+  <widget class="QLabel" name="label_lastname">
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -170,7 +170,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="name_edit">
+  <widget class="QLineEdit" name="lastname_edit">
    <property name="geometry">
     <rect>
      <x>620</x>

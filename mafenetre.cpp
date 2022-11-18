@@ -79,28 +79,29 @@ void MaFenetre::on_card_btn_clicked()
         status = Mf_Classic_Read_Sector(&reader, true, 2, data, true, 2); // use key A for sector n, with key stored in slot n
         qDebug() << (status == MI_OK);
         if (status == MI_OK) {
-            // 3 blocks
-            printf("reading block 0 in sector 2:\n");
-            int block = 0;
+            // first block contains "Identite", and is not used
+            // second block contains "Vincent"
+            // third block contains "Thivent"
+            QString firstname;
             for (int offset = 0; offset < 16; offset++) {
-                printf("%c", data[block * 16 + offset]);
+                firstname.append(QChar(data[16 + offset]));
             }
-            printf("\nreading block 1 in sector 2:\n");
-            block = 1;
+            //qDebug() << firstname;
+            ui->firstname_edit->setText(firstname);
+
+            QString lastname;
             for (int offset = 0; offset < 16; offset++) {
-                printf("%c", data[block * 16 + offset]);
+                lastname.append(QChar(data[32 + offset]));
             }
-            printf("\nreading block 2 in sector 2:\n");
-            block = 2;
-            for (int offset = 0; offset < 16; offset++) {
-                printf("%c", data[block * 16 + offset]);
-            }
-            printf("\n");
+            //qDebug() << lastname;
+            ui->lastname_edit->setText(lastname);
 
         }
 
         // read points
         status = Mf_Classic_Read_Sector(&reader, true, 3, data, true, 3);
+        // block is
+        //status = Mf_Classic_Read_Value(&reader, true, 3, );
         qDebug() << (status == MI_OK);
         if (status == MI_OK) {
             // 3 blocks to read
