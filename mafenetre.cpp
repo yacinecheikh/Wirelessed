@@ -99,25 +99,19 @@ void MaFenetre::on_card_btn_clicked()
         }
 
         // read points
-        status = Mf_Classic_Read_Sector(&reader, true, 3, data, true, 3);
-        // block is
-        //status = Mf_Classic_Read_Value(&reader, true, 3, );
+        //status = Mf_Classic_Read_Sector(&reader, true, 3, data, true, 3); // works, but cannot decode the complete value
+        // sector is 3
+        // block is 14 according to the TDTP pdf
+        uint32_t value;
+        status = Mf_Classic_Read_Value(&reader, true, 14, &value, true, 3);
         qDebug() << (status == MI_OK);
         if (status == MI_OK) {
-            // 3 blocks to read
+            //
+            qDebug() << value;
         }
         // read sectors (using key 1, 2 and 3)
         //status = Mf_Classic_Read_Block(&reader, TRUE, 0, data, true, 0);
         //status = Mf_Classic_Read_Block(&reader, TRUE, 5, data, true, 0);
         //qDebug() << (status == MI_OK);
-
-        //display everything in the sector
-        if (status == MI_OK) {
-            for (int i = 0; i < 240; i++) {
-                printf("%c", data[i]);
-            }
-
-            qDebug() << data;
-        }
     }
 }
