@@ -1,0 +1,15 @@
+IHM-Lecteur:
+opencom()
+renvoie OK/NOK
+version()
+renvoie OK(firmware version)/NOK
+RF_PowerControl(): active le champ électromagnétique du lecteur
+(important pour pouvoir lire les données)
+renvoie OK/NOK
+
+
+lire la carte:
+iso14443_Pollcard
+renvoie Ok(UID des infos)/NOK
+Mf_ReadBlock()
+renvoie OK(infos)/NOK
