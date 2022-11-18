@@ -80,15 +80,27 @@ void MaFenetre::on_card_btn_clicked()
         qDebug() << (status == MI_OK);
         if (status == MI_OK) {
             // 3 blocks
-            printf("reading block 1 in sector 1");
+            printf("reading block 0 in sector 2:\n");
             int block = 0;
             for (int offset = 0; offset < 16; offset++) {
                 printf("%c", data[block * 16 + offset]);
             }
+            printf("\nreading block 1 in sector 2:\n");
+            block = 1;
+            for (int offset = 0; offset < 16; offset++) {
+                printf("%c", data[block * 16 + offset]);
+            }
+            printf("\nreading block 2 in sector 2:\n");
+            block = 2;
+            for (int offset = 0; offset < 16; offset++) {
+                printf("%c", data[block * 16 + offset]);
+            }
+            printf("\n");
+
         }
 
         // read points
-        status = Mf_Classic_Read_Sector(&reader, true, 2, data, true, 2);
+        status = Mf_Classic_Read_Sector(&reader, true, 3, data, true, 3);
         qDebug() << (status == MI_OK);
         if (status == MI_OK) {
             // 3 blocks to read
@@ -97,7 +109,13 @@ void MaFenetre::on_card_btn_clicked()
         //status = Mf_Classic_Read_Block(&reader, TRUE, 0, data, true, 0);
         //status = Mf_Classic_Read_Block(&reader, TRUE, 5, data, true, 0);
         //qDebug() << (status == MI_OK);
+
+        //display everything in the sector
         if (status == MI_OK) {
+            for (int i = 0; i < 240; i++) {
+                printf("%c", data[i]);
+            }
+
             qDebug() << data;
         }
     }
