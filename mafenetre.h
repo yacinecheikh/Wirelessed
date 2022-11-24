@@ -24,6 +24,8 @@ private slots:
 
     void on_card_btn_clicked();
 
+    void on_spend_btn_clicked();
+
 private:
     Ui::MaFenetre *ui;
 };

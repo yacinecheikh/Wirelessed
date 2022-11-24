@@ -100,7 +100,7 @@ void MaFenetre::on_card_btn_clicked()
 
         }
 
-        // read points
+        // read counter value
         //status = Mf_Classic_Read_Sector(&reader, true, 3, data, true, 3); // works, but cannot decode the complete value
         // sector is 3
         // block is 14 according to the TDTP pdf
@@ -108,10 +108,28 @@ void MaFenetre::on_card_btn_clicked()
         status = Mf_Classic_Read_Value(&reader, true, 14, &value, true, 3);
         if (status == MI_OK) {
             ui->counter_edit->setText(QString(std::to_string(value).c_str()));
+        } else {
+            qDebug() << "error while reading counter value";
         }
         // read sectors (using key 1, 2 and 3)
         //status = Mf_Classic_Read_Block(&reader, TRUE, 0, data, true, 0);
         //status = Mf_Classic_Read_Block(&reader, TRUE, 5, data, true, 0);
         //qDebug() << (status == MI_OK);
+    }
+}
+
+void MaFenetre::on_spend_btn_clicked()
+{
+    double dvalue = ui->spend_amount->value();
+    uint32_t value = (uint32_t) dvalue;
+
+    // write on block 14 using key for sector 3
+    uint16_t status;
+    status = Mf_Classic_Write_Value(&reader, true, 14, value, false, 3);
+
+    if (status == MI_OK) {
+        qDebug() << "wrote correctly";
+    } else {
+        qDebug() << "could not write";
     }
 }
