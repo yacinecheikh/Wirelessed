@@ -10,8 +10,6 @@
 #include "mafenetre.h"
 #include "ui_mafenetre.h"
 
-#include <iostream>
-
 #include <QtGui>
 
 MaFenetre::MaFenetre(QWidget *parent)
@@ -55,6 +53,8 @@ void MaFenetre::on_input_btn_clicked()
 
 void MaFenetre::on_quit_btn_clicked()
 {
+    // move to "disconnect" button
+    // (still not in the UI, see TDTP pdf)
     int16_t status = MI_OK;
     RF_Power_Control(&reader, FALSE, 0);
     status = LEDBuzzer(&reader, LED_OFF);
@@ -72,51 +72,61 @@ void MaFenetre::on_card_btn_clicked()
     uint8_t uid[12];
     uint16_t uidlen = 12;
     status = ISO14443_3_A_PollCard(&reader, atq, sak, uid, &uidlen);
-    qDebug() << (status == MI_OK);
+
+    // conseil du prof: lire des blocs plutôt que des secteurs pour l’identité (facilite son écriture après en n’accédant qu’aux parties utiles)
+
+    // see TDTP pdf page 9 for block details
+    // sectors 2 and 3 are encrypted (check if 4 is encrypted)
+    // sector 2 requires key 2, sector 3 requires key 3
+    // other sectors can be read with key 0 (or auth=false ?)
+
+    // Mf_Classic_Read_Block/Sector/Value(reader=&reader, auth=true, sector/block, out=data, readkey=true, keynum)
+    // out is uint8_t[16] for blocks and [240] for sectors (15*16=240, 15 blocks per sector)
+    // readkey is key A if true (key B is used for writing)
+    // keynum is 2 for sector 2,...
+
     if (status == MI_OK) {
-        //uint8_t data[16]; // 16 bytes per block
-        uint8_t data[240]; // in a 15 blocks sector, 15 * 16bytes=240
-        // read name
-        // data is read for sector 0 with key 0
-        //status = Mf_Classic_Read_Sector(&reader, true, 0, data, true, 0);
-        // encrypted sectors are the 2, 3 and 4
-        status = Mf_Classic_Read_Sector(&reader, true, 2, data, true, 2); // use key A for sector n, with key stored in slot n
-        qDebug() << (status == MI_OK);
+
+        uint8_t data[16];
+        status = Mf_Classic_Read_Block(&reader, true, 9, data, true, 2); // block 9 in sector 2
         if (status == MI_OK) {
-            // first block contains "Identite", and is not used
-            // second block contains "Vincent"
-            // third block contains "Thivent"
             QString firstname;
-            for (int offset = 0; offset < 16; offset++) {
-                firstname.append(QChar(data[16 + offset]));
+            for (int i = 0; i < 16; i++) {
+                if (data[i] == 0) {
+                    break;
+                }
+                firstname.append(QChar(data[i]));
             }
-            //qDebug() << firstname;
             ui->firstname_edit->setText(firstname);
+        } else {
+            qDebug() << "error: could not read first name";
+        }
 
+        status = Mf_Classic_Read_Block(&reader, true, 10, data, true, 2);
+
+        if (status == MI_OK) {
             QString lastname;
-            for (int offset = 0; offset < 16; offset++) {
-                lastname.append(QChar(data[32 + offset]));
+            for (int i = 0; i < 16; i++) {
+                if (data[i] == 0) {
+                    break;
+                }
+                lastname.append(QChar(data[i]));
             }
-            //qDebug() << lastname;
             ui->lastname_edit->setText(lastname);
-
+        } else {
+            qDebug() << "error: could not read last name";
         }
 
         // read counter value
-        //status = Mf_Classic_Read_Sector(&reader, true, 3, data, true, 3); // works, but cannot decode the complete value
-        // sector is 3
-        // block is 14 according to the TDTP pdf
         uint32_t value;
-        status = Mf_Classic_Read_Value(&reader, true, 14, &value, true, 3);
+        status = Mf_Classic_Read_Value(&reader, true, 14, &value, true, 3); // block 14, sector 3
         if (status == MI_OK) {
-            ui->counter_edit->setText(QString(std::to_string(value).c_str()));
+            ui->counter_edit->setText(QString::number(value));
         } else {
-            qDebug() << "error while reading counter value";
+            qDebug() << "error: could not read counter value";
         }
-        // read sectors (using key 1, 2 and 3)
-        //status = Mf_Classic_Read_Block(&reader, TRUE, 0, data, true, 0);
-        //status = Mf_Classic_Read_Block(&reader, TRUE, 5, data, true, 0);
-        //qDebug() << (status == MI_OK);
+    } else {
+        qDebug() << "error: could not read card";
     }
 }
 
