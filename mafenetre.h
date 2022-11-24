@@ -26,6 +26,8 @@ private slots:
 
     void on_spend_btn_clicked();
 
+    void on_update_identity_btn_clicked();
+
 private:
     Ui::MaFenetre *ui;
 };

@@ -133,3 +133,10 @@ void MaFenetre::on_spend_btn_clicked()
         qDebug() << "could not write";
     }
 }
+
+void MaFenetre::on_update_identity_btn_clicked()
+{
+    uint16_t status;
+
+
+}
