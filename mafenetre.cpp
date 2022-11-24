@@ -45,11 +45,13 @@ void MaFenetre::on_connect_btn_clicked() {
     qDebug() << "OpenCOM " << status;
 }
 
+/*
 void MaFenetre::on_input_btn_clicked()
 {
     QString text = ui->input_text->toPlainText();
     qDebug() << "Text: " << text;
 }
+*/
 
 void MaFenetre::on_quit_btn_clicked()
 {
@@ -138,5 +140,13 @@ void MaFenetre::on_update_identity_btn_clicked()
 {
     uint16_t status;
 
-
+    // write on sector 2 using key 2
+    uint8_t data[240];
+    // debug sector content
+    status = Mf_Classic_Read_Sector(&reader, true, 2, data, true, 2);
+    //QDebug out = qDebug();
+    for (int i = 0; i < 240; i++) {
+        qDebug() << QString(data[i]); //std::to_string(data[i]).c_str());
+    }
+    //status = Mf_Classic_Write_Sector()
 }

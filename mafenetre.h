@@ -18,7 +18,7 @@ public:
 private slots:
     void on_connect_btn_clicked();
 
-    void on_input_btn_clicked();
+    //void on_input_btn_clicked();
 
     void on_quit_btn_clicked();
 
