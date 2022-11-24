@@ -10,6 +10,8 @@
 #include "mafenetre.h"
 #include "ui_mafenetre.h"
 
+#include <iostream>
+
 #include <QtGui>
 
 MaFenetre::MaFenetre(QWidget *parent)
@@ -104,10 +106,8 @@ void MaFenetre::on_card_btn_clicked()
         // block is 14 according to the TDTP pdf
         uint32_t value;
         status = Mf_Classic_Read_Value(&reader, true, 14, &value, true, 3);
-        qDebug() << (status == MI_OK);
         if (status == MI_OK) {
-            //
-            qDebug() << value;
+            ui->counter_edit->setText(QString(std::to_string(value).c_str()));
         }
         // read sectors (using key 1, 2 and 3)
         //status = Mf_Classic_Read_Block(&reader, TRUE, 0, data, true, 0);
