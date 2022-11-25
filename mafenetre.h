@@ -28,6 +28,8 @@ private slots:
 
     void on_update_identity_btn_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::MaFenetre *ui;
 };

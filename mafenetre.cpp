@@ -146,6 +146,24 @@ void MaFenetre::on_spend_btn_clicked()
     }
 }
 
+void MaFenetre::on_pushButton_clicked()
+{
+    double dvalue = ui->raise_amount->value();
+    uint32_t value = (uint32_t) dvalue;
+    // read from block 14 using key 3
+    uint16_t status;
+    status = Mf_Classic_Read_Value(&reader, true, 14, &value, true, 3);
+    if (status == MI_OK) {
+        // write the result
+        status = Mf_Classic_Write_Value(&reader, true, 14, value, false, 3);
+    }
+
+    // will be executed if any of the above operations results in a NOK result
+    if (status != MI_OK) {
+        qDebug() << "error: could not write the value";
+    }
+}
+
 void MaFenetre::on_update_identity_btn_clicked()
 {
     uint16_t status;
@@ -187,3 +205,5 @@ void MaFenetre::on_update_identity_btn_clicked()
         qDebug() << "error: could not write last name";
     }
 }
+
+
