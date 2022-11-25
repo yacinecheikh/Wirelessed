@@ -132,35 +132,45 @@ void MaFenetre::on_card_btn_clicked()
 
 void MaFenetre::on_spend_btn_clicked()
 {
+    // value is in block 14 (sector 3)
     double dvalue = ui->spend_amount->value();
     uint32_t value = (uint32_t) dvalue;
 
-    // write on block 14 using key for sector 3
     uint16_t status;
-    status = Mf_Classic_Write_Value(&reader, true, 14, value, false, 3);
+    // read previous value
+    uint32_t previous;
+    status = Mf_Classic_Read_Value(&reader, true, 14, &previous, true, 3);
+    if (status == MI_OK) {
+        // write new value
+        status = Mf_Classic_Write_Value(&reader, true, 14, previous - value, false, 3);
+    }
 
     if (status == MI_OK) {
+        ui->counter_edit->setText(QString::number(previous - value));
         qDebug() << "wrote correctly";
     } else {
         qDebug() << "could not write";
     }
 }
 
-void MaFenetre::on_pushButton_clicked()
+void MaFenetre::on_raise_btn_clicked()
 {
     double dvalue = ui->raise_amount->value();
     uint32_t value = (uint32_t) dvalue;
-    // read from block 14 using key 3
+    uint32_t previous;
     uint16_t status;
-    status = Mf_Classic_Read_Value(&reader, true, 14, &value, true, 3);
+    // read previous value
+    status = Mf_Classic_Read_Value(&reader, true, 14, &previous, true, 3);
     if (status == MI_OK) {
-        // write the result
-        status = Mf_Classic_Write_Value(&reader, true, 14, value, false, 3);
+        // write new value
+        status = Mf_Classic_Write_Value(&reader, true, 14, value + previous, false, 3);
     }
 
-    // will be executed if any of the above operations results in a NOK result
-    if (status != MI_OK) {
-        qDebug() << "error: could not write the value";
+    if (status == MI_OK) {
+        qDebug() << "wrote correctly";
+        ui->counter_edit->setText(QString::number(previous + value));
+    } else {
+        qDebug() << "could not write";
     }
 }
 
@@ -190,7 +200,7 @@ void MaFenetre::on_update_identity_btn_clicked()
 
 
     // last name
-    QString lastname = ui->firstname_edit->text();
+    QString lastname = ui->lastname_edit->text();
     i = 0;
     while (i < lastname.size()) {
         data[i] = lastname.at(i).toLatin1();
