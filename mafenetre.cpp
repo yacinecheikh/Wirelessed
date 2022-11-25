@@ -37,25 +37,26 @@ void MaFenetre::on_connect_btn_clicked() {
         qDebug() << "Connected";
         status = Version(&reader);
         ui->device_label->setText(reader.version);
-        ui->device_label->update();
+        //ui->device_label->update();
         RF_Power_Control(&reader, true, 0);
+
     }
     qDebug() << "OpenCOM " << status;
 }
 
 void MaFenetre::on_disconnect_btn_clicked()
 {
+    // status is not used, because the connection might already be cut from physically disconnecting the reader
+    // -> if the disconnection fails, the reader is already disconnected
+    uint16_t status;
+    RF_Power_Control(&reader, false, 0);
+    status = CloseCOM(&reader);
+
+    qDebug() << "closeCOM " << status;
 
 }
 
 
-/*
-void MaFenetre::on_input_btn_clicked()
-{
-    QString text = ui->input_text->toPlainText();
-    qDebug() << "Text: " << text;
-}
-*/
 
 void MaFenetre::on_quit_btn_clicked()
 {
@@ -92,6 +93,7 @@ void MaFenetre::on_card_btn_clicked()
     // keynum is 2 for sector 2,...
 
     if (status == MI_OK) {
+        LEDBuzzer(&reader, LED_GREEN_ON + LED_YELLOW_ON + BUZZER_ON);
 
         uint8_t data[16];
         status = Mf_Classic_Read_Block(&reader, true, 9, data, true, 2); // block 9 in sector 2
@@ -131,6 +133,8 @@ void MaFenetre::on_card_btn_clicked()
         } else {
             qDebug() << "error: could not read counter value";
         }
+
+        LEDBuzzer(&reader, LED_GREEN_ON + BUZZER_OFF);
     } else {
         qDebug() << "error: could not read card";
     }

@@ -30,6 +30,8 @@ private slots:
 
     void on_raise_btn_clicked();
 
+    void on_disconnect_btn_clicked();
+
 private:
     Ui::MaFenetre *ui;
 };

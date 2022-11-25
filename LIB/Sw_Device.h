@@ -68,11 +68,11 @@ ODALID_LIB int16_t GestionDeconnection(
 #define LED_ON              0x17                            /**< ???. */
 #define LED_OFF             0x00                            /**< ???. */
 #define LED_GREEN_OFF       0x00                            /**< ???. */
-#define LED_GREEN_ON        LED3_ON                         /**< ???. */
+#define LED_GREEN_ON        LED1_ON                         /**< ???. */
 #define LED_YELLOW_OFF      0x00                            /**< ???. */
 #define LED_YELLOW_ON       LED2_ON                         /**< ???. */
 #define LED_RED_OFF         0x00                            /**< ???. */
-#define LED_RED_ON          LED1_ON                         /**< ???. */
+#define LED_RED_ON          LED3_ON                         /**< ???. */
 #define BUZZER_OFF          0x00                            /**< ???. */
 #define BUZZER_ON           0x08                            /**< ???. */
 #define GACHE1_OFF          0x00                            /**< ???. */
