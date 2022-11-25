@@ -156,7 +156,6 @@ void MaFenetre::on_update_identity_btn_clicked()
     // debug sector content
     // first name
     QString firstname = ui->firstname_edit->text();
-    qDebug() << firstname.size();
     int i = 0;
     while (i < firstname.size()) {
         data[i] = firstname.at(i).toLatin1();
@@ -170,12 +169,21 @@ void MaFenetre::on_update_identity_btn_clicked()
     if(status != MI_OK) {
         qDebug() << "error: could not write first name";
     }
-    /*
+
+
     // last name
+    QString lastname = ui->firstname_edit->text();
+    i = 0;
+    while (i < lastname.size()) {
+        data[i] = lastname.at(i).toLatin1();
+        i++;
+    }
+    while (i < 16) {
+        data[i] = 0;
+        i++;
+    }
     status = Mf_Classic_Write_Block(&reader, true, 10, data, false, 2);
-    if (status != MI_OK) {
+    if(status != MI_OK) {
         qDebug() << "error: could not write last name";
     }
-    */
-    //status = Mf_Classic_Write_Sector()
 }
