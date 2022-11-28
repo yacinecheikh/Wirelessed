@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Connect</string>
+    <string>Connecter</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_identity">
@@ -258,7 +258,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Disconnect</string>
+    <string>Déconnecter</string>
    </property>
   </widget>
  </widget>

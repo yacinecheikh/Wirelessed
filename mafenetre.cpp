@@ -92,10 +92,7 @@ void MaFenetre::on_card_btn_clicked()
     uint16_t uidlen = 12;
     status = ISO14443_3_A_PollCard(&reader, atq, sak, uid, &uidlen);
 
-    // conseil du prof: lire des blocs plutôt que des secteurs pour l’identité (facilite son écriture après en n’accédant qu’aux parties utiles)
-
-    // see TDTP pdf page 9 for block details
-    // sectors 2 and 3 are encrypted (check if 4 is encrypted)
+    // sectors 2 and 3 are encrypted
     // sector 2 requires key 2, sector 3 requires key 3
     // other sectors can be read with key 0
 
@@ -162,8 +159,7 @@ void MaFenetre::on_spend_btn_clicked()
     if (status == MI_OK) {
         qDebug() << "decremented correctly";
 
-        // update UI by reading the card
-        // can fail, the UI will not update but the data is still correctly saved
+        // read the card to update the UI
         on_card_btn_clicked();
     } else {
         qDebug() << "error: could not decrement";
@@ -178,6 +174,8 @@ void MaFenetre::on_raise_btn_clicked()
     status = Mf_Classic_Increment_Value(&reader, true, 14, value, 14, key_b, 3);
     if (status == MI_OK) {
         qDebug() << "incremented correctly";
+
+        // read the card to refresh the UI
         on_card_btn_clicked();
     } else {
         qDebug() << "could not write";
