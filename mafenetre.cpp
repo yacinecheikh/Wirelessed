@@ -12,6 +12,9 @@
 
 #include <QtGui>
 
+
+// read key is key A
+// write key is key B
 const bool key_a = true;
 const bool key_b = false;
 
@@ -89,18 +92,16 @@ void MaFenetre::on_card_btn_clicked()
     // see TDTP pdf page 9 for block details
     // sectors 2 and 3 are encrypted (check if 4 is encrypted)
     // sector 2 requires key 2, sector 3 requires key 3
-    // other sectors can be read with key 0 (or auth=false ?)
+    // other sectors can be read with key 0
 
-    // Mf_Classic_Read_Block/Sector/Value(reader=&reader, auth=true, sector/block, out=data, readkey=true, keynum)
-    // out is uint8_t[16] for blocks and [240] for sectors (15*16=240, 15 blocks per sector)
-    // readkey is key A if true (key B is used for writing)
-    // keynum is 2 for sector 2,...
+    // Mf_Classic_Read_Block/Value(reader=&reader, auth=true, block, out=data, readkey=key_a|key_b, keynum)
+    // out is uint8_t[16] for blocks
 
     if (status == MI_OK) {
         LEDBuzzer(&reader, LED_GREEN_ON + LED_YELLOW_ON + BUZZER_ON);
 
         uint8_t data[16];
-        status = Mf_Classic_Read_Block(&reader, true, 9, data, true, 2); // block 9 in sector 2
+        status = Mf_Classic_Read_Block(&reader, true, 9, data, key_a, 2); // block 9 in sector 2
         if (status == MI_OK) {
             QString firstname;
             for (int i = 0; i < 16; i++) {
@@ -114,7 +115,7 @@ void MaFenetre::on_card_btn_clicked()
             qDebug() << "error: could not read first name";
         }
 
-        status = Mf_Classic_Read_Block(&reader, true, 10, data, true, 2);
+        status = Mf_Classic_Read_Block(&reader, true, 10, data, key_a, 2);
 
         if (status == MI_OK) {
             QString lastname;
@@ -131,7 +132,7 @@ void MaFenetre::on_card_btn_clicked()
 
         // read counter value
         uint32_t value;
-        status = Mf_Classic_Read_Value(&reader, true, 14, &value, true, 3); // block 14, sector 3
+        status = Mf_Classic_Read_Value(&reader, true, 14, &value, key_a, 3); // block 14, sector 3
         if (status == MI_OK) {
             ui->counter_edit->setText(QString::number(value));
         } else {
@@ -152,7 +153,7 @@ void MaFenetre::on_spend_btn_clicked()
     uint32_t value = ui->spend_amount->value();
 
     uint16_t status;
-    status = Mf_Classic_Decrement_Value(&reader, true, 14, value, 14, false, 3);
+    status = Mf_Classic_Decrement_Value(&reader, true, 14, value, 14, key_b, 3);
     if (status == MI_OK) {
         qDebug() << "decremented correctly";
 
@@ -169,7 +170,7 @@ void MaFenetre::on_raise_btn_clicked()
     uint32_t value = ui->raise_amount->value();
 
     uint16_t status;
-    status = Mf_Classic_Increment_Value(&reader, true, 14, value, 14, false, 3);
+    status = Mf_Classic_Increment_Value(&reader, true, 14, value, 14, key_b, 3);
     if (status == MI_OK) {
         qDebug() << "incremented correctly";
         on_card_btn_clicked();
@@ -197,7 +198,7 @@ void MaFenetre::on_update_identity_btn_clicked()
         data[i] = 0;
         i++;
     }
-    status = Mf_Classic_Write_Block(&reader, true, 9, data, false, 2);
+    status = Mf_Classic_Write_Block(&reader, true, 9, data, key_b, 2);
     if(status != MI_OK) {
         qDebug() << "error: could not write first name";
     }
@@ -214,7 +215,7 @@ void MaFenetre::on_update_identity_btn_clicked()
         data[i] = 0;
         i++;
     }
-    status = Mf_Classic_Write_Block(&reader, true, 10, data, false, 2);
+    status = Mf_Classic_Write_Block(&reader, true, 10, data, key_b, 2);
     if(status != MI_OK) {
         qDebug() << "error: could not write last name";
     }
