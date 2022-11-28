@@ -35,10 +35,12 @@ MaFenetre::~MaFenetre()
 ReaderName reader;
 bool connected = false;
 
+
 void MaFenetre::on_connect_btn_clicked() {
     if (connected) {
-        qDebug() << "already connected";
-        return;
+        // cannot connect when already connected
+        // disconnect first to refresh the connection
+        disconnect();
     }
 
     int16_t status = MI_OK;
@@ -59,25 +61,24 @@ void MaFenetre::on_connect_btn_clicked() {
     }
 }
 
+
+void MaFenetre::disconnect() {
+    // should disconnect even if the reader is physically disconnected
+    // -> ignore status codes
+    RF_Power_Control(&reader, false, 0);
+    CloseCOM(&reader);
+    connected = false;
+}
+
 void MaFenetre::on_disconnect_btn_clicked()
 {
-    // status is not used, because the connection might already be cut from physically disconnecting the reader
-    // -> if the disconnection fails, the reader is already disconnected
-    uint16_t status;
-    RF_Power_Control(&reader, false, 0);
-    status = CloseCOM(&reader);
-    if (status == MI_OK) {
-        qDebug() << "disconnected";
-    }
-    connected = false;
+    disconnect();
+    qDebug() << "disconnected";
 }
 
 // override window closing behaviour
 void MaFenetre::closeEvent(QCloseEvent *close) {
-    // in case the reader is already disconnected, ignore status error codes and still exit the application
-    RF_Power_Control(&reader, false, 0);
-    CloseCOM(&reader);
-
+    disconnect();
     close->accept();
 }
 
@@ -102,6 +103,7 @@ void MaFenetre::on_card_btn_clicked()
     if (status == MI_OK) {
         LEDBuzzer(&reader, LED_GREEN_ON + LED_YELLOW_ON + BUZZER_ON);
 
+        // read first name
         uint8_t data[16];
         status = Mf_Classic_Read_Block(&reader, true, 9, data, key_a, 2); // block 9 in sector 2
         if (status == MI_OK) {
@@ -117,8 +119,8 @@ void MaFenetre::on_card_btn_clicked()
             qDebug() << "error: could not read first name";
         }
 
+        // read last name
         status = Mf_Classic_Read_Block(&reader, true, 10, data, key_a, 2);
-
         if (status == MI_OK) {
             QString lastname;
             for (int i = 0; i < 16; i++) {

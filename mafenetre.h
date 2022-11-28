@@ -15,6 +15,8 @@ public:
     MaFenetre(QWidget *parent = nullptr);
     ~MaFenetre();
 
+    void disconnect();
+
 private slots:
     void on_connect_btn_clicked();
 
