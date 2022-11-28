@@ -18,8 +18,6 @@ public:
 private slots:
     void on_connect_btn_clicked();
 
-    void on_quit_btn_clicked();
-
     void on_card_btn_clicked();
 
     void on_spend_btn_clicked();
@@ -30,7 +28,7 @@ private slots:
 
     void on_disconnect_btn_clicked();
 
-    //void update_ui();
+    void closeEvent(QCloseEvent *close);
 
 private:
     Ui::MaFenetre *ui;

@@ -33,22 +33,30 @@ MaFenetre::~MaFenetre()
 
 
 ReaderName reader;
+bool connected = false;
 
 void MaFenetre::on_connect_btn_clicked() {
+    if (connected) {
+        qDebug() << "already connected";
+        return;
+    }
+
     int16_t status = MI_OK;
     reader.Type = ReaderCDC;
     reader.device = 0;
 
     status = OpenCOM(&reader);
     if (status == 0) {
+        connected = true;
         qDebug() << "Connected";
         status = Version(&reader);
-        ui->label_device->setText(reader.version);
-        //ui->device_label->update();
-        RF_Power_Control(&reader, true, 0);
+        if (status == MI_OK) {
+            ui->label_device->setText(reader.version);
+        }
+        status = RF_Power_Control(&reader, true, 0);
+        status = LEDBuzzer(&reader, LED_GREEN_ON);
 
     }
-    qDebug() << "OpenCOM " << status;
 }
 
 void MaFenetre::on_disconnect_btn_clicked()
@@ -58,22 +66,19 @@ void MaFenetre::on_disconnect_btn_clicked()
     uint16_t status;
     RF_Power_Control(&reader, false, 0);
     status = CloseCOM(&reader);
-
-    qDebug() << "closeCOM " << status;
-
+    if (status == MI_OK) {
+        qDebug() << "disconnected";
+    }
+    connected = false;
 }
 
+// override window closing behaviour
+void MaFenetre::closeEvent(QCloseEvent *close) {
+    // in case the reader is already disconnected, ignore status error codes and still exit the application
+    RF_Power_Control(&reader, false, 0);
+    CloseCOM(&reader);
 
-
-void MaFenetre::on_quit_btn_clicked()
-{
-    // move to "disconnect" button
-    // (still not in the UI, see TDTP pdf)
-    int16_t status = MI_OK;
-    RF_Power_Control(&reader, FALSE, 0);
-    status = LEDBuzzer(&reader, LED_OFF);
-    status = CloseCOM(&reader);
-    qApp->quit();
+    close->accept();
 }
 
 

@@ -26,19 +26,6 @@
     <string>Connect</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="quit_btn">
-   <property name="geometry">
-    <rect>
-     <x>720</x>
-     <y>10</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Quitter</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_identity">
    <property name="geometry">
     <rect>
