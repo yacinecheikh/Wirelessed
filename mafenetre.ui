@@ -78,7 +78,7 @@
     <string>Prénom</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_spend_2">
+  <widget class="QLabel" name="label_spend">
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -123,8 +123,11 @@
      <x>620</x>
      <y>260</y>
      <width>121</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
+   </property>
+   <property name="text">
+    <string>0</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="firstname_edit">
@@ -170,7 +173,7 @@
     <string>Dépenser</string>
    </property>
   </widget>
-  <widget class="QLabel" name="raise_label">
+  <widget class="QLabel" name="label_raise">
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -183,7 +186,7 @@
     <string>Augmenter</string>
    </property>
   </widget>
-  <widget class="QLabel" name="raise_amount_label">
+  <widget class="QLabel" name="label_raise_amount">
    <property name="geometry">
     <rect>
      <x>560</x>
@@ -219,7 +222,7 @@
     <string>Ajouter</string>
    </property>
   </widget>
-  <widget class="QLabel" name="device_label">
+  <widget class="QLabel" name="label_device">
    <property name="geometry">
     <rect>
      <x>30</x>

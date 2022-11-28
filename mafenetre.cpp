@@ -12,6 +12,10 @@
 
 #include <QtGui>
 
+const bool key_a = true;
+const bool key_b = false;
+
+
 MaFenetre::MaFenetre(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MaFenetre)
@@ -36,7 +40,7 @@ void MaFenetre::on_connect_btn_clicked() {
     if (status == 0) {
         qDebug() << "Connected";
         status = Version(&reader);
-        ui->device_label->setText(reader.version);
+        ui->label_device->setText(reader.version);
         //ui->device_label->update();
         RF_Power_Control(&reader, true, 0);
 
@@ -140,45 +144,35 @@ void MaFenetre::on_card_btn_clicked()
     }
 }
 
+
+
 void MaFenetre::on_spend_btn_clicked()
 {
     // value is in block 14 (sector 3)
-    double value = ui->spend_amount->value();
-    uint32_t decrement = (uint32_t) value;
+    uint32_t value = ui->spend_amount->value();
 
     uint16_t status;
-    // read previous value
-    uint32_t previous;
-    status = Mf_Classic_Read_Value(&reader, true, 14, &previous, true, 3);
+    status = Mf_Classic_Decrement_Value(&reader, true, 14, value, 14, false, 3);
     if (status == MI_OK) {
-        // write new value
-        status = Mf_Classic_Write_Value(&reader, true, 14, previous - decrement, false, 3);
-    }
+        qDebug() << "decremented correctly";
 
-    if (status == MI_OK) {
-        ui->counter_edit->setText(QString::number(previous - decrement));
-        qDebug() << "wrote correctly";
+        // update UI by reading the card
+        // can fail, the UI will not update but the data is still correctly saved
+        on_card_btn_clicked();
     } else {
-        qDebug() << "could not write";
+        qDebug() << "error: could not decrement";
     }
 }
 
 void MaFenetre::on_raise_btn_clicked()
 {
-    double value = ui->raise_amount->value();
-    uint32_t increment = (uint32_t) value;
-    uint32_t previous;
-    uint16_t status;
-    // read previous value
-    status = Mf_Classic_Read_Value(&reader, true, 14, &previous, true, 3);
-    if (status == MI_OK) {
-        // write new value
-        status = Mf_Classic_Write_Value(&reader, true, 14, previous + increment, false, 3);
-    }
+    uint32_t value = ui->raise_amount->value();
 
+    uint16_t status;
+    status = Mf_Classic_Increment_Value(&reader, true, 14, value, 14, false, 3);
     if (status == MI_OK) {
-        qDebug() << "wrote correctly";
-        ui->counter_edit->setText(QString::number(previous + increment));
+        qDebug() << "incremented correctly";
+        on_card_btn_clicked();
     } else {
         qDebug() << "could not write";
     }
